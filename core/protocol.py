@@ -52,7 +52,7 @@ class Index(Resource):
 
         event = {
             'eventid': 'elasticpot.recon',
-            'message': 'Head scan',
+            'type': 'Head scan',
             'url': collapsed_path
         }
 
@@ -69,7 +69,7 @@ class Index(Resource):
 
         event = {
             'eventid': 'elasticpot.recon',
-            'message': 'Scan',
+            'type': 'Scan',
             'url': collapsed_path
         }
 
@@ -213,7 +213,7 @@ class Index(Resource):
                 logger(request, 'INFO', 'POST body: {}'.format(post_data))
                 event = {
                     'eventid': 'elasticpot.attack',
-                    'message': 'Exploit',
+                    'type': 'Exploit',
                     'payload': post_data,
                     'url': path
                 }
@@ -370,25 +370,25 @@ class Index(Resource):
 
     def report_event(self, request, event):
         unix_time = time()
-        human_time = get_utc_time(unix_time)
         local_ip = get_local_ip()
-        event['timestamp'] = human_time
+        event['timestamp'] = int(time.time() * 1000)
         event['unixtime'] = unix_time
         event['src_ip'] = request.getClientAddress().host
         event['src_port'] = request.getClientAddress().port
-        event['dst_port'] = self.cfg['port']
+        event['dest_port'] = self.cfg['port']
         event['sensor'] = self.cfg['sensor']
         event['request'] = decode(request.method)
+        event['protocol']='http'
         user_agent = request.getHeader('User-Agent')
         if user_agent:
-            event['user_agent'] = user_agent
+            event['extend']['user_agent'] = user_agent
         content_type = request.getHeader('Content-Type')
         if content_type:
-            event['content_type'] = content_type
+            event['extend']['content_type'] = content_type
         accept_language = request.getHeader('Accept-Language')
         if accept_language:
-            event['accept_language'] = accept_language
-        event['dst_ip'] = self.cfg['public_ip'] if self.cfg['report_public_ip'] else local_ip
+            event['extend']['accept_language'] = accept_language
+        event['dest_ip'] = self.cfg['public_ip'] if self.cfg['report_public_ip'] else local_ip
         write_event(event, self.cfg)
 
     def get_json(self, page):
