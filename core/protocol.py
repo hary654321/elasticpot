@@ -379,6 +379,9 @@ class Index(Resource):
         event['sensor'] = self.cfg['sensor']
         event['request'] = decode(request.method)
         event['protocol']='http'
+        event['app']='ElasticPot'
+        event['name']='ElasticPot'
+        event['UUID']='<UUID>'
         user_agent = request.getHeader('User-Agent')
         if user_agent:
             event['extend']['user_agent'] = user_agent
