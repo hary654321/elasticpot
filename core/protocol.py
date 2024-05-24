@@ -371,7 +371,7 @@ class Index(Resource):
     def report_event(self, request, event):
         unix_time = time()
         local_ip = get_local_ip()
-        event['timestamp'] = int(time.time() * 1000)
+        event['timestamp'] = int(unix_time * 1000)
         event['unixtime'] = unix_time
         event['src_ip'] = request.getClientAddress().host
         event['src_port'] = request.getClientAddress().port
