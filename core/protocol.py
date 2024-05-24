@@ -382,6 +382,7 @@ class Index(Resource):
         event['app']='ElasticPot'
         event['name']='ElasticPot'
         event['UUID']='<UUID>'
+        event['extend'] = {}
         user_agent = request.getHeader('User-Agent')
         if user_agent:
             event['extend']['user_agent'] = user_agent
